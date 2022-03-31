@@ -1,20 +1,21 @@
-from unicodedata import category
-
-from models.category import Category
+from pydantic import BaseModel, Field
 
 
-class Event:
-    name: str
-    category: Category
-    desc: str
-    rules: str
-    contact: str
-    id: int
-    fee: int
-    tags: list(str)
-    regs_enabled: bool
-    popular: bool
-    flagship: bool
-    min_participants: int
-    max_participants: int
-    info: str
+class Event(BaseModel):
+    name: str = Field(...)
+    category: str = Field(...)
+    desc: str = Field(...)
+    rules: str = Field(...)
+    contact: int = Field(...)
+    id: int = Field(...)
+    fee: int = Field(...)
+    tags: list[str] = Field(...)
+    regs_enabled: bool = Field(...)
+    popular: bool = Field(...)
+    flagship: bool = Field(...)
+    min_participants: int = Field(...)
+    max_participants: int = Field(...)
+    info: str = Field(...)
+
+    class Config:
+        arbitrary_types_allowed = True

@@ -28,7 +28,7 @@ def get_categories(token: str = Depends(oauth2_scheme)):
 
 # TODO: add response model
 @route.post("/", status_code=201)
-def get_categories(category: Category = Body(...), token: str = Depends(oauth2_scheme)):
+def post_category(category: Category = Body(...), token: str = Depends(oauth2_scheme)):
     if check_token(token):
         categories = config.techtrix_db["categories"]
         try:
