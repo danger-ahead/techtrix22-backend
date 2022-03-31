@@ -5,3 +5,5 @@ __pycache__/mongo_loader.cpython-38.pyc
 routes/__pycache__/home.cpython-38.pyc
 __pycache__/mongo_loader.cpython-310.pyc
 routes/__pycache__/home.cpython-310.pyc
+models/__pycache__/category.cpython-310.pyc
+routes/__pycache__/categories.cpython-310.pyc

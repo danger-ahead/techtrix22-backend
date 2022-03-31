@@ -1,14 +1,16 @@
 import os
 import dotenv
 
+import env_config
+
 
 def get_cluster0():
-    dotenv.load_dotenv()
+    # dotenv.load_dotenv()
 
-    username = os.getenv("ADMIN_USERNAME")
-    password = os.getenv("PASSWORD")
-    cluster_name = os.getenv("CLUSTER_NAME")
-    database = os.getenv("DATABASE")
+    # username = os.getenv("ADMIN_USERNAME")
+    # password = os.getenv("PASSWORD")
+    # cluster_name = os.getenv("CLUSTER_NAME")
+    # database = os.getenv("DATABASE")
     # endpoint = os.getenv("CLUSTER_STRING_ENDPOINT")
 
     from pymongo import MongoClient
@@ -16,13 +18,13 @@ def get_cluster0():
 
     CONNECTION_STRING = (
         "mongodb+srv://"
-        + username
+        + env_config.username
         + ":"
-        + password
+        + env_config.password
         + "@"
-        + cluster_name
+        + env_config.cluster_name
         + ".mongodb.net/"
-        + database
+        + env_config.database
         + "?retryWrites=true&w=majority"
     )
 
@@ -33,13 +35,6 @@ def get_cluster0():
 
     # techtrix22 database object
     db = client["techtrix"]
-
-    # techtrix22 collection object
-    participants = db["participants"]
-
-    participant = participants.find_one({"name": "Shourya Shikhar Ghosh"})
-
-    print(participant)
 
     return db
 

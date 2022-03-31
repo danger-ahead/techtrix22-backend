@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routes import home
+from routes import home, categories
 
 
 # models.Base.metadata.create_all(bind=engine)
@@ -19,6 +19,7 @@ app.add_middleware(
 
 
 app.include_router(home.route)
+app.include_router(categories.route)
 
 
 @app.get("/")
