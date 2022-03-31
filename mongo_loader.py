@@ -1,27 +1,48 @@
 import os
 import dotenv
 
-def get_database():
+
+def get_cluster0():
     dotenv.load_dotenv()
 
-    username = os.getenv("USERNAME")
+    username = os.getenv("ADMIN_USERNAME")
     password = os.getenv("PASSWORD")
     cluster_name = os.getenv("CLUSTER_NAME")
     database = os.getenv("DATABASE")
-    endpoint = os.getenv("CLUSTER_STRING_ENDPOINT")
+    # endpoint = os.getenv("CLUSTER_STRING_ENDPOINT")
 
-    
     from pymongo import MongoClient
     import pymongo
 
-    CONNECTION_STRING = "mongodb+srv://{username}:{password}@{cluster_name}.mongodb.net"
+    CONNECTION_STRING = (
+        "mongodb+srv://"
+        + username
+        + ":"
+        + password
+        + "@"
+        + cluster_name
+        + ".mongodb.net/"
+        + database
+        + "?retryWrites=true&w=majority"
+    )
 
     from pymongo import MongoClient
-    client = MongoClient(f'{database}')
 
-    print(client.list_databases)
+    # techtrix22 project object
+    client = MongoClient(CONNECTION_STRING)
 
-    return client['{database}']
-    
-if __name__ == "__main__":    
-    dbname = get_database()
+    # techtrix22 database object
+    db = client["techtrix"]
+
+    # techtrix22 collection object
+    participants = db["participants"]
+
+    participant = participants.find_one({"name": "Shourya Shikhar Ghosh"})
+
+    print(participant)
+
+    return db
+
+
+if __name__ == "__main__":
+    dbname = get_cluster0()
