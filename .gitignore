@@ -1,1 +1,4 @@
 /techtrix22
+.env
+__pycache__/mongo_loader.cpython-38.pyc
+routes/__pycache__/home.cpython-38.pyc

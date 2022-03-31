@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 # from database import engine
-from routes import home
+# from routes import home
+import mongo_loader
 
 
 # models.Base.metadata.create_all(bind=engine)
 
+mongo_loader.get_database()
 
 app = FastAPI()
 
@@ -19,7 +21,7 @@ app.add_middleware(
 )
 
 
-app.include_router(home.route)
+# app.include_router(home.route)
 
 
 @app.get("/")
