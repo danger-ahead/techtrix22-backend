@@ -7,7 +7,7 @@ class Event(BaseModel):
     category: str = Field(...)
     desc: str = Field(...)
     rules: str = Field(...)
-    contact: dict = Field(...)
+    contact: list[str] = Field(...)
     id: int = Field(...)
     fee: int = Field(...)
     tags: list[str] = Field(...)

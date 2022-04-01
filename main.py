@@ -2,10 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 
-from routes import home, categories, sponsors, events, participants
+from routes import home, categories, sponsors, events, participants, search
 
-
-# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -24,6 +22,7 @@ app.include_router(categories.route)
 app.include_router(sponsors.route)
 app.include_router(events.route)
 app.include_router(participants.route)
+app.include_router(search.route)
 
 
 @app.get("/")
