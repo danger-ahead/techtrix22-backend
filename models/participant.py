@@ -6,6 +6,7 @@ class Participant(BaseModel):
     name: str = Field(...)
     email: str = Field(...)
     phone: int = Field(...)
+    alt_phone: int = Field(...)
     institution: str = Field(...)
     gender: str = Field(...)
     general_fees: bool = Field(...)

@@ -23,23 +23,23 @@ def get_events_under_category(search_term: str):
 
 @route.get("/{search_term}", status_code=200)
 def search(search_term: str):
-    events_results = config.techtrix_db["events"]
-    category_results = config.techtrix_db["categories"]
+    events = config.techtrix_db["events"]
+    categories = config.techtrix_db["categories"]
 
-    results = []
+    event_results = []
+    category_results = []
 
-    result = events_results.find()
+    result = events.find()
     for i in result:
-        if (i["name"]).lower().find(search_term.lower()) is not -1:
-            results.append(i)
+        if (i["name"]).lower().__contains__(search_term.lower()):
+            event_results.append(i)
 
-    if results.__len__() == 0:
-        result = category_results.find()
-        for i in result:
-            if (i["name"]).lower().find(search_term.lower()) is not -1:
-                results.append(i)
+    result = categories.find()
+    for i in result:
+        if (i["name"]).lower().__contains__(search_term.lower()):
+            category_results.append(i)
 
-    if results.__len__() == 0:
+    if event_results.__len__() == 0 and category_results.__len__() == 0:
         raise HTTPException(status_code=204, detail="nothing found")
 
-    return results
+    return {"events": event_results, "categories": category_results}

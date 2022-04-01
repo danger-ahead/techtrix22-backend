@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException
 from auth import check_token
 from fastapi.security import OAuth2PasswordBearer
+from typing import List
 
 import config
 from models.participant import Participant
@@ -38,7 +39,7 @@ def get_participants(email: str, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.post("/", status_code=201)
+@route.post("/", status_code=201, response_model=Participant)
 def post_participant(
     participant: Participant = Body(...), token: str = Depends(oauth2_scheme)
 ):
@@ -48,6 +49,7 @@ def post_participant(
         if (
             participants.find_one({"email": participant.email}) is not None
             or participants.find_one({"phone": participant.phone}) is not None
+            or participants.find_one({"alt_phone": participant.alt_phone}) is not None
         ):
             raise HTTPException(status_code=409, detail="participant already exists")
 
@@ -57,12 +59,13 @@ def post_participant(
                 "name": participant.name,
                 "email": participant.email,
                 "phone": participant.phone,
+                "alt_phone": participant.alt_phone,
                 "institution": participant.institution,
                 "general_fees": participant.general_fees,
                 "gender": participant.gender,
             }
         )
-        return {"success": "true"}
+        return participant
 
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")

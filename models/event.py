@@ -7,7 +7,7 @@ class Event(BaseModel):
     category: str = Field(...)
     desc: str = Field(...)
     rules: str = Field(...)
-    contact: list[str] = Field(...)
+    contact: str = Field(...)
     id: int = Field(...)
     fee: int = Field(...)
     tags: list[str] = Field(...)
@@ -17,6 +17,7 @@ class Event(BaseModel):
     min_participants: int = Field(...)
     max_participants: int = Field(...)
     info: str = Field(...)
+    poster: str = Field(...)
 
     class Config:
         arbitrary_types_allowed = True

@@ -12,17 +12,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @route.get("/", status_code=200)
-def get_categories(token: str = Depends(oauth2_scheme)):
-    if check_token(token):
-        categories = config.techtrix_db["categories"]
-        categories = list(categories.find())
-        if categories.__len__() == 0:
-            raise HTTPException(
-                status_code=204, detail="Nothing yet added to the categories"
-            )
-        return categories
-    else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+def get_categories():
+    categories = config.techtrix_db["categories"]
+    categories = list(categories.find())
+    if categories.__len__() == 0:
+        raise HTTPException(
+            status_code=204, detail="Nothing yet added to the categories"
+        )
+    return categories
 
 
 # TODO: add response model

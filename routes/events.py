@@ -46,6 +46,7 @@ def post_event(event: Event = Body(...), token: str = Depends(oauth2_scheme)):
                     "min_participants": event.min_participants,
                     "max_participants": event.max_participants,
                     "info": event.info,
+                    "poster": event.poster,
                 }
             )
             return {"success": "true"}
