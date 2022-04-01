@@ -28,16 +28,22 @@ def get_Sponsors(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.post("/",status_code=201)
-def get_Sponsors(sponsor:Sponsor = Body(...), token: str = Depends(oauth2_scheme)):
+@route.post("/", status_code=201)
+def get_Sponsors(sponsor: Sponsor = Body(...), token: str = Depends(oauth2_scheme)):
     if check_token(token):
         try:
             sponsors = config.techtrix_db["sponsors"]
-            sponsors.insert_one({"_id":sponsor.id,"name":sponsor.name,"description":sponsor.description,"image":sponsor.image,"links":sponsor.links})
-            return {"success":"true"}
-        except Exception as e:
-            raise HTTPException(
-                status_code=409, detail=str(e)
+            sponsors.insert_one(
+                {
+                    "_id": sponsor.id,
+                    "name": sponsor.name,
+                    "description": sponsor.description,
+                    "image": sponsor.image,
+                    "links": sponsor.links,
+                }
             )
+            return {"success": "true"}
+        except Exception as e:
+            raise HTTPException(status_code=409, detail=str(e))
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")

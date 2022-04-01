@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 
 class Participant(BaseModel):
-    id: int = Field(...)
+    id: str = Field(...)
     name: str = Field(...)
     email: str = Field(...)
     phone: int = Field(...)

@@ -1,3 +1,4 @@
+from pickletools import int4
 from pydantic import BaseModel, Field
 
 
@@ -6,7 +7,7 @@ class Event(BaseModel):
     category: str = Field(...)
     desc: str = Field(...)
     rules: str = Field(...)
-    contact: int = Field(...)
+    contact: dict = Field(...)
     id: int = Field(...)
     fee: int = Field(...)
     tags: list[str] = Field(...)

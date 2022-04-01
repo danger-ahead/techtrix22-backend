@@ -3,7 +3,6 @@ import env_config
 from cryptography.fernet import Fernet
 
 
-
 """
 TODO: error in token of parameter. expecting bytes. use any method of encryption
 """

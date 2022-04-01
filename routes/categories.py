@@ -3,7 +3,6 @@ from auth import check_token
 from fastapi.security import OAuth2PasswordBearer
 from typing import List
 
-# import models, utils
 import config
 from models.category import Category
 
@@ -32,7 +31,7 @@ def post_category(category: Category = Body(...), token: str = Depends(oauth2_sc
     if check_token(token):
         categories = config.techtrix_db["categories"]
         try:
-            categories.insert_one({"_id": category.category_id, "name": category.name})
+            categories.insert_one({"_id": category.id, "name": category.name})
             return {"success": "true"}
         except Exception as e:
             raise HTTPException(status_code=409, detail=str(e))
