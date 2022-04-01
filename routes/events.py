@@ -2,9 +2,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from auth import check_token
 from fastapi.security import OAuth2PasswordBearer
 
-# import models, utils
 import config
-from models.category import Category
 from models.event import Event
 
 route = APIRouter(prefix="/events", tags=["Events"])
