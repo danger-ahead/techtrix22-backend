@@ -11,20 +11,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @route.get("/", status_code=200)
-def get_events(token: str = Depends(oauth2_scheme)):
-    if check_token(token):
-        events = config.techtrix_db["events"]
-        events = list(events.find())
-        if events.__len__() == 0:
-            raise HTTPException(
-                status_code=204, detail="Nothing yet added to the events"
-            )
-        return events
-    else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+def get_events():
+    events = config.techtrix_db["events"]
+    events = list(events.find())
+    if events.__len__() == 0:
+        raise HTTPException(status_code=204, detail="Nothing yet added to the events")
+    return events
 
 
-# TODO: add response model
 @route.post("/", status_code=201)
 def post_event(event: Event = Body(...), token: str = Depends(oauth2_scheme)):
     if check_token(token):

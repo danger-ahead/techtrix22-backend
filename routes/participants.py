@@ -24,27 +24,46 @@ def get_participants(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
+@route.get("/{email}", status_code=200)
+def get_participants(email: str, token: str = Depends(oauth2_scheme)):
+    if check_token(token):
+        participants = config.techtrix_db["participants"]
+        participants = participants.find_one({"email": email})
+        if participants == None:
+            raise HTTPException(
+                status_code=204, detail="nothing yet added to the participants"
+            )
+        return participants
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+
 @route.post("/", status_code=201)
 def post_participant(
     participant: Participant = Body(...), token: str = Depends(oauth2_scheme)
 ):
     if check_token(token):
         participants = config.techtrix_db["participants"]
-        try:
-            participants.insert_one(
-                {
-                    "_id": participant.id,
-                    "name": participant.name,
-                    "email": participant.email,
-                    "phone": participant.phone,
-                    "institution": participant.institution,
-                    "general_fees": participant.general_fees,
-                    "gender": participant.gender,
-                }
-            )
-            return {"success": "true"}
-        except Exception as e:
-            raise HTTPException(status_code=409, detail=str(e))
+
+        if (
+            participants.find_one({"email": participant.email}) is not None
+            or participants.find_one({"phone": participant.phone}) is not None
+        ):
+            raise HTTPException(status_code=409, detail="participant already exists")
+
+        participants.insert_one(
+            {
+                "_id": participant.id,
+                "name": participant.name,
+                "email": participant.email,
+                "phone": participant.phone,
+                "institution": participant.institution,
+                "general_fees": participant.general_fees,
+                "gender": participant.gender,
+            }
+        )
+        return {"success": "true"}
+
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 

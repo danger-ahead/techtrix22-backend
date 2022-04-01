@@ -5,7 +5,6 @@ from models.sponsor import Sponsor
 
 
 import config
-from models.category import Category
 
 
 route = APIRouter(prefix="/sponsors", tags=["Sponsors"])
@@ -15,21 +14,16 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @route.get("/", status_code=200)
-def get_Sponsors(token: str = Depends(oauth2_scheme)):
-    if check_token(token):
-        sponsors = config.techtrix_db["sponsors"]
-        sponsor = list(sponsors.find())
-        if sponsor.__len__() == 0:
-            raise HTTPException(
-                status_code=204, detail="Nothing yet added to the sponsors"
-            )
-        return sponsor
-    else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+def get_Sponsors():
+    sponsors = config.techtrix_db["sponsors"]
+    sponsor = list(sponsors.find())
+    if sponsor.__len__() == 0:
+        raise HTTPException(status_code=204, detail="Nothing yet added to the sponsors")
+    return sponsor
 
 
 @route.post("/", status_code=201)
-def get_Sponsors(sponsor: Sponsor = Body(...), token: str = Depends(oauth2_scheme)):
+def add_Sponsors(sponsor: Sponsor = Body(...), token: str = Depends(oauth2_scheme)):
     if check_token(token):
         try:
             sponsors = config.techtrix_db["sponsors"]
