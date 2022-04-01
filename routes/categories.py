@@ -1,16 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from auth import check_token
 from fastapi.security import OAuth2PasswordBearer
+from typing import List
 
 # import models, utils
 import config
 from models.category import Category
 
 route = APIRouter(prefix="/categories", tags=["Categories"])
-
-"""
-Get all categories
-"""
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -25,5 +22,19 @@ def get_categories(token: str = Depends(oauth2_scheme)):
                 status_code=204, detail="Nothing yet added to the categories"
             )
         return categories
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+
+# TODO: add response model
+@route.post("/", status_code=201)
+def post_category(category: Category = Body(...), token: str = Depends(oauth2_scheme)):
+    if check_token(token):
+        categories = config.techtrix_db["categories"]
+        try:
+            categories.insert_one({"_id": category.category_id, "name": category.name})
+            return {"success": "true"}
+        except Exception as e:
+            raise HTTPException(status_code=409, detail=str(e))
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")

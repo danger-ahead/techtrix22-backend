@@ -7,3 +7,5 @@ __pycache__/mongo_loader.cpython-310.pyc
 routes/__pycache__/home.cpython-310.pyc
 models/__pycache__/category.cpython-310.pyc
 routes/__pycache__/categories.cpython-310.pyc
+models/__pycache__/event.cpython-310.pyc
+routes/__pycache__/events.cpython-310.pyc
