@@ -16,8 +16,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 def get_teams(search_term: str, token: str = Depends(oauth2_scheme)):
     if check_token(token):
         teams = config.techtrix_db["teams"]
-        # team = teams.find_one({"id": {"$regex": search_term, "$options": "i"}})
-        team = teams.find_one({"_id": search_term})
+        team = teams.find_one({"_id": {"$regex": search_term, "$options": "i"}})
         if team is None:
             raise HTTPException(status_code=204, detail="no team found")
         return team
@@ -36,10 +35,31 @@ def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
                     "members": team.members,
                     "contact": team.contact,
                     "image": team.image,
-                    "event": team.event,
+                    "events": team.events,
                 }
             )
             return team
+        else:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+
+    except Exception as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+
+@route.put("/edit_events/{id}", status_code=201)
+def edit_participated_events(
+    id: str, events: dict, token: str = Depends(oauth2_scheme)
+):
+    try:
+        if check_token(token):
+            teams = config.techtrix_db["teams"]
+            teams.update_one(
+                {"_id": id},
+                {
+                    "$set": events,
+                },
+            )
+            return {"success": "true"}
         else:
             raise HTTPException(status_code=401, detail="Unauthorized")
 

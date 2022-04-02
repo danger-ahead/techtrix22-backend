@@ -28,8 +28,8 @@ def post_category(category: Category = Body(...), token: str = Depends(oauth2_sc
     if check_token(token):
         categories = config.techtrix_db["categories"]
         try:
-            categories.insert_one({"_id": category.id, "name": category.name})
-            return {"success": "true"}
+            categories.insert_one({"_id": category.id})
+            return category
         except Exception as e:
             raise HTTPException(status_code=409, detail=str(e))
     else:
