@@ -80,6 +80,6 @@ token: str = Depends(oauth2_scheme)):
             events.update_one({"_id":id},{"$set":update_event},False)
             return {"success":"true"}
         else:
-            raise HTTPException(status_code=404, detail="participant not found")
+            raise HTTPException(status_code=404, detail="event not found")
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
