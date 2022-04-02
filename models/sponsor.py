@@ -7,3 +7,6 @@ class Sponsor(BaseModel):
     image: str = Field(...)
     links: list[str] = Field(...)
     id: int = Field(...)
+
+    class Config:
+        arbitrary_types_allowed = True
