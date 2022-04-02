@@ -10,7 +10,7 @@ route = APIRouter(prefix="/categories", tags=["Categories"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-#This function fetches all categories from db
+# This function fetches all categories from db
 @route.get("/", status_code=200)
 def get_categories():
     categories = config.techtrix_db["categories"]
@@ -23,7 +23,7 @@ def get_categories():
 
 
 # TODO: add response model
-#This function is used create a new category in d 
+# This function is used create a new category in d
 @route.post("/", status_code=201)
 def post_category(category: Category = Body(...), token: str = Depends(oauth2_scheme)):
     if check_token(token):

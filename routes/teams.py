@@ -29,7 +29,7 @@ def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
 
         if check_token(token):
             teams = config.techtrix_db["teams"]
-        
+
             teams.insert_one(
                 {
                     "_id": team.id,
@@ -44,6 +44,7 @@ def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
             raise HTTPException(status_code=401, detail="Unauthorized")
     except Exception as e:
         raise HTTPException(status_code=409, detail=str(e))
+
 
 @route.put("/edit/{id}", status_code=201)
 def edit_teams(id: int, team: dict, token: str = Depends(oauth2_scheme)):

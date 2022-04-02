@@ -21,16 +21,12 @@ def home(token: str = Depends(oauth2_scheme)):
         events = config.techtrix_db["events"]
         categories = config.techtrix_db["categories"]
 
-        popular_events = list(events.find({"popular": True}))
-        flagship_events = list(events.find({"flagship": True}))
-
-        if popular_events.__len__() is not 0:
-            for i in popular_events:
-                list_popular_events.append(i)
-
-        if flagship_events.__len__() is not 0:
-            for i in flagship_events:
-                list_flagship_events.append(i)
+        events_obj = list(events.find())
+        for event in events_obj:
+            if event["popular"]:
+                list_popular_events.append(event)
+            if event["flagship"]:
+                list_flagship_events.append(event)
 
         category_events = list(categories.find())
         if category_events.__len__() is not 0:
