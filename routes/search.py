@@ -11,9 +11,6 @@ def get_events_under_category(search_term: str):
 
     results = list(events.find({"category": {"$regex": search_term, "$options": "i"}}))
 
-    if results.__len__() == 0:
-        raise HTTPException(status_code=204, detail="nothing found")
-
     return results
 
 
@@ -29,8 +26,5 @@ def search(search_term: str):
     category_results = list(
         categories.find({"_id": {"$regex": search_term, "$options": "i"}})
     )
-
-    if event_results.__len__() == 0 and category_results.__len__() == 0:
-        raise HTTPException(status_code=204, detail="nothing found")
 
     return {"events": event_results, "categories": category_results}
