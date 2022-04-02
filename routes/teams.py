@@ -4,7 +4,6 @@ from fastapi.security import OAuth2PasswordBearer
 from typing import List
 
 import config
-from models.participant import Participant
 from models.team import Team
 
 route = APIRouter(prefix="/teams", tags=["Teams"])

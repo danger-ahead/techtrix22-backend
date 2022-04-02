@@ -1,26 +1,28 @@
+from datetime import datetime
+import random
 from fastapi import APIRouter, Body, Depends, HTTPException
 from auth import check_token
 from fastapi.security import OAuth2PasswordBearer
 
 import config
 from models.registration import Registration
+from models.registration_pay import RegistrationPay
 
 route = APIRouter(prefix="/registrations", tags=["Registrations"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
+# register for the event
 @route.post("/", status_code=201)
 async def register(
     registration: Registration = Body(...), token: str = Depends(oauth2_scheme)
 ):
     if check_token(token):
-        reg_id = registration.team_name.encode("ascii")
+        reg_id = str(datetime.now()) + " R " + str(random.randint(0, 99))
+
         registrations = config.techtrix_db["registrations"]
         participants = config.techtrix_db["participants"]
-
-        if registrations.find_one({"team_name": reg_id}):
-            raise HTTPException(status_code=409, detail="team name already exists")
 
         for i in registration.participants:
             if participants.find_one({"email": i}) is None:
@@ -41,8 +43,9 @@ async def register(
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
+# get all the events the participant has registered in
 @route.get("/email/{search_term}", status_code=200)
-async def get_total_fee(search_term: str, token: str = Depends(oauth2_scheme)):
+async def check_events(search_term: str, token: str = Depends(oauth2_scheme)):
     if check_token(token):
         registrations = config.techtrix_db["registrations"]
         registration = registrations.find()
@@ -75,25 +78,58 @@ def check_general_fees(participant_set):
     return participants_dict
 
 
+# get payment details from email
 @route.get("/get_payment/email/{search_term}", status_code=200)
 async def get_total_fee(search_term: str, token: str = Depends(oauth2_scheme)):
     if check_token(token):
-        participants = config.techtrix_db["participants"]
         registrations = config.techtrix_db["registrations"]
+        events = config.techtrix_db["events"]
 
         registration = registrations.find()
 
+        # will be storing the email, no duplication
         participants_set = set()
+        # will be storing the event list the participant has participated in
+        events_list = []
 
         for reg in registration:
-            participants = reg["participants"]
-            for i in participants:
-                if search_term == i:
-                    participants_set = participants_set.union(set(participants))
-                    break
+            if not reg["paid"]:
+                participants = reg["participants"]
+                for i in participants:
+                    if search_term == i:
+                        event = events.find_one({"_id": int(reg["event"])})
+                        event_name = event["name"]
+                        event_fee = event["fee"]
+
+                        events_list.append({reg["_id"]: {event_name: event_fee}})
+                        participants_set = participants_set.union(set(participants))
+
+                        break
 
         general_fees = check_general_fees(participants_set)
-        return {"general_fees": general_fees}
+        return {"general_fees": general_fees, "event_fees": events_list}
+
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+
+@route.put("/pay", status_code=204)
+async def get_total_fee(
+    registration_pay: RegistrationPay = Body(...), token: str = Depends(oauth2_scheme)
+):
+    if check_token(token):
+        registrations = config.techtrix_db["registrations"]
+        participants = config.techtrix_db["participants"]
+
+        for i in registration_pay.general_fees:
+            participants.update_one({"email": i}, {"$set": {"general_fees": True}})
+
+        for i in registration_pay.reg_id:
+            registration = registrations.find_one({"_id": i})
+            if registration is not None:
+                registrations.update_one({"_id": i}, {"$set": {"paid": True}})
+
+        return {"success": "true"}
 
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
