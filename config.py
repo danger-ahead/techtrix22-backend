@@ -7,3 +7,6 @@ import mongo_loader
 
 
 techtrix_db = mongo_loader.get_cluster0()
+
+
+general_fees = 20
