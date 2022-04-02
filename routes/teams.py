@@ -26,42 +26,65 @@ def get_teams(search_term: str, token: str = Depends(oauth2_scheme)):
 
 @route.post("/", status_code=201)
 def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
-    try:
-        if check_token(token):
-            teams = config.techtrix_db["teams"]
-            teams.insert_one(
-                {
-                    "_id": team.id,
-                    "members": team.members,
-                    "contact": team.contact,
-                    "image": team.image,
-                    "events": team.events,
-                }
-            )
-            return team
-        else:
-            raise HTTPException(status_code=401, detail="Unauthorized")
+    if check_token(token):
+        teams = config.techtrix_db["teams"]
 
-    except Exception as e:
-        raise HTTPException(status_code=409, detail=str(e))
+        for i in team.members:
+            participant = config.techtrix_db["participants"].find_one({"phone": i})
+            if participant is None:
+                raise HTTPException(
+                    status_code=204, detail="participant not found: " + str(i)
+                )
+
+        teams.insert_one(
+            {
+                "_id": team.id,
+                "members": team.members,
+                "contact": team.contact,
+                "image": team.image,
+                "events": team.events,
+            }
+        )
+        return team
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.put("/edit_events/{id}", status_code=201)
+@route.put("/edit/{id}", status_code=201)
 def edit_participated_events(
-    id: str, events: dict, token: str = Depends(oauth2_scheme)
+    id: str, updates: dict, token: str = Depends(oauth2_scheme)
 ):
-    try:
-        if check_token(token):
-            teams = config.techtrix_db["teams"]
+    if check_token(token):
+        teams = config.techtrix_db["teams"]
+        if teams.find_one({"_id": id}) is None:
+            raise HTTPException(status_code=204, detail="team not found")
+        else:
             teams.update_one(
                 {"_id": id},
                 {
-                    "$set": events,
+                    "$set": updates,
                 },
             )
             return {"success": "true"}
-        else:
-            raise HTTPException(status_code=401, detail="Unauthorized")
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
-    except Exception as e:
-        raise HTTPException(status_code=409, detail=str(e))
+
+@route.put("/edit/{id}", status_code=201)
+def edit_participated_events(
+    id: str, updates: dict, token: str = Depends(oauth2_scheme)
+):
+    if check_token(token):
+        teams = config.techtrix_db["teams"]
+        if teams.find_one({"_id": id}) is None:
+            raise HTTPException(status_code=204, detail="team not found")
+        else:
+            teams.update_one(
+                {"_id": id},
+                {
+                    "$set": updates,
+                },
+            )
+            return {"success": "true"}
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")

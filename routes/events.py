@@ -35,7 +35,7 @@ def post_event(event: Event = Body(...), token: str = Depends(oauth2_scheme)):
         categories = config.techtrix_db["categories"]
         if categories.find_one({"_id": event.category}) is None:
             raise HTTPException(
-                status_code=400,
+                status_code=204,
                 detail="category does not exist",
             )
         try:
