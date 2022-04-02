@@ -8,3 +8,5 @@ class Team(BaseModel):
     role: (str) = Field(...)
     contact_phone : int = Field(...)
 
+    class Config:
+        arbitrary_types_allowed = True

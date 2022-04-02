@@ -65,9 +65,14 @@ def post_event(event: Event = Body(...), token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
+<<<<<<< HEAD
 @route.put("/edit/{id}",status_code=204)
 def update_event(id:int,event:dict,
 token: str = Depends(oauth2_scheme)):
+=======
+@route.put("/{id}", status_code=204)
+def update_event(id: int, event: dict, token: str = Depends(oauth2_scheme)):
+>>>>>>> master
     if check_token(token):
         events = config.techtrix_db["events"]
 
@@ -76,9 +81,9 @@ token: str = Depends(oauth2_scheme)):
             if event[key] is not None:
                 update_event[key] = event[key]
 
-        if events.find_one({"_id":id}):
-            events.update_one({"_id":id},{"$set":update_event},False)
-            return {"success":"true"}
+        if events.find_one({"_id": id}):
+            events.update_one({"_id": id}, {"$set": update_event}, False)
+            return {"success": "true"}
         else:
             raise HTTPException(status_code=404, detail="event not found")
     else:
