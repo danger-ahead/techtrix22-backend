@@ -31,9 +31,7 @@ def get_participants(email: str, token: str = Depends(oauth2_scheme)):
         participants = config.techtrix_db["participants"]
         participants = participants.find_one({"email": email})
         if participants == None:
-            raise HTTPException(
-                status_code=204, detail="nothing yet added to the participants"
-            )
+            raise HTTPException(status_code=204, detail="no such participant found")
         return participants
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -89,7 +87,7 @@ def update_participant(
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.put("/{id}", status_code=204)
+@route.put("/{id}", status_code=200)
 def update_participant(id: str, participant: dict, token: str = Depends(oauth2_scheme)):
     if check_token(token):
         participants = config.techtrix_db["participants"]
