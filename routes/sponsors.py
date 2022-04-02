@@ -18,7 +18,7 @@ def get_Sponsors():
     sponsors = config.techtrix_db["sponsors"]
     sponsor = list(sponsors.find())
     if sponsor.__len__() == 0:
-        raise HTTPException(status_code=204, detail="Nothing yet added to the sponsors")
+        raise HTTPException(status_code=204, detail=[])
     return sponsor
 
 

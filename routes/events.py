@@ -9,7 +9,7 @@ route = APIRouter(prefix="/events", tags=["Events"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
+#This function fetches all events from db
 @route.get("/", status_code=200)
 def get_events():
     events = config.techtrix_db["events"]
@@ -18,7 +18,7 @@ def get_events():
         raise HTTPException(status_code=204, detail="Nothing yet added to the events")
     return events
 
-
+#This function fetches a particular event on the basis of event id
 @route.get("/{id}", status_code=200)
 def get_event_by_id(id: int):
     events = config.techtrix_db["events"]
@@ -27,7 +27,7 @@ def get_event_by_id(id: int):
         raise HTTPException(status_code=204, detail="no event found")
     return event
 
-
+#This function is used to create a new event 
 @route.post("/", status_code=201)
 def post_event(event: Event = Body(...), token: str = Depends(oauth2_scheme)):
     if check_token(token):
@@ -64,7 +64,7 @@ def post_event(event: Event = Body(...), token: str = Depends(oauth2_scheme)):
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-
+#This function lets you update details of a particular event params:event id
 @route.put("/edit/{id}", status_code=204)
 def update_event(id: int, event: dict, token: str = Depends(oauth2_scheme)):
     if check_token(token):

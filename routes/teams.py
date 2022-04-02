@@ -17,7 +17,7 @@ def get_teams(token: str = Depends(oauth2_scheme)):
         teams = config.techtrix_db["teams"]
         team = list(teams.find())
         if team.__len__() == 0:
-            raise HTTPException(status_code=204, detail="no team found")
+            raise HTTPException(status_code=204, detail=[])
         return team
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
