@@ -23,6 +23,10 @@ async def register(
 
         registrations = config.techtrix_db["registrations"]
         participants = config.techtrix_db["participants"]
+        events = config.techtrix_db["events"]
+        reg_event_obj = events.find_one({"_id":int(registration.event)})
+        print(reg_event_obj)
+
 
         for i in registration.participants:
             if participants.find_one({"email": i}) is None:
@@ -35,6 +39,8 @@ async def register(
                 "participants": registration.participants,
                 "event": registration.event,
                 "paid": registration.paid,
+                "event_name":reg_event_obj["name"],
+                "event_category":reg_event_obj["category"]
             }
         )
         return registration
