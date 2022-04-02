@@ -7,3 +7,6 @@ class Team(BaseModel):
     events: dict[str, bool] = Field(...)
     contact: int = Field(...)
     image: str = Field(...)
+
+    class Config:
+        arbitrary_types_allowed = True

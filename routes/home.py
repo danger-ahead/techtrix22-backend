@@ -16,7 +16,7 @@ async def home(token: str = Depends(oauth2_scheme)):
 
         list_popular_events = []
         list_flagship_events = []
-        list_categoru_events = []
+        list_category_events = []
 
         events = config.techtrix_db["events"]
         categories = config.techtrix_db["categories"]
@@ -35,16 +35,13 @@ async def home(token: str = Depends(oauth2_scheme)):
         category_events = list(categories.find())
         if category_events.__len__() is not 0:
             for i in category_events:
-                list_categoru_events.append(i["name"])
-
-        # HARDCODED DATA
-        trending_searches = ["Robotics", "ROAD RASH", "BGMI"]
+                list_category_events.append(i["_id"])
 
         return {
             "popular": list_popular_events,
             "flagship": list_flagship_events,
-            "categories": list_categoru_events,
-            "trending": trending_searches,
+            "categories": list_category_events,
+            "trending": config.trending_searches,
         }
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")

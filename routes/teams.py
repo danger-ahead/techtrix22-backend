@@ -50,27 +50,7 @@ def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.put("/edit/{id}", status_code=201)
-def edit_participated_events(
-    id: str, updates: dict, token: str = Depends(oauth2_scheme)
-):
-    if check_token(token):
-        teams = config.techtrix_db["teams"]
-        if teams.find_one({"_id": id}) is None:
-            raise HTTPException(status_code=204, detail="team not found")
-        else:
-            teams.update_one(
-                {"_id": id},
-                {
-                    "$set": updates,
-                },
-            )
-            return {"success": "true"}
-    else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-
-@route.put("/edit/{id}", status_code=201)
+@route.put("/edit/{id}", status_code=204)
 def edit_participated_events(
     id: str, updates: dict, token: str = Depends(oauth2_scheme)
 ):
