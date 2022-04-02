@@ -11,7 +11,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @route.get("/", status_code=200)
-def home(token: str = Depends(oauth2_scheme)):
+async def home(token: str = Depends(oauth2_scheme)):
     if check_token(token):
 
         list_popular_events = []
@@ -26,11 +26,11 @@ def home(token: str = Depends(oauth2_scheme)):
 
         if popular_events.__len__() is not 0:
             for i in popular_events:
-                list_popular_events.append(i["name"])
+                list_popular_events.append(i)
 
         if flagship_events.__len__() is not 0:
             for i in flagship_events:
-                list_flagship_events.append(i["name"])
+                list_flagship_events.append(i)
 
         category_events = list(categories.find())
         if category_events.__len__() is not 0:

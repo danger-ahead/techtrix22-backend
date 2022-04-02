@@ -49,7 +49,6 @@ def post_participant(
         if (
             participants.find_one({"email": participant.email}) is not None
             or participants.find_one({"phone": participant.phone}) is not None
-            or participants.find_one({"alt_phone": participant.alt_phone}) is not None
         ):
             raise HTTPException(status_code=409, detail="participant already exists")
 
@@ -82,6 +81,26 @@ def update_participant(
             participants.update_one(
                 {"_id": id}, {"$set": {"general_fees": general_fees}}
             )
+            return {"success": "true"}
+        else:
+            raise HTTPException(status_code=404, detail="participant not found")
+
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+
+@route.put("/{id}", status_code=204)
+def update_participant(id: str, participant: dict, token: str = Depends(oauth2_scheme)):
+    if check_token(token):
+        participants = config.techtrix_db["participants"]
+
+        update_items = {}
+        for key in participant:
+            if participant[key] is not None:
+                update_items[key] = participant[key]
+
+        if participants.find_one({"_id": id}):
+            participants.update_one({"_id": id}, {"$set": update_items})
             return {"success": "true"}
         else:
             raise HTTPException(status_code=404, detail="participant not found")

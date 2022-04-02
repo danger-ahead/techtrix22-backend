@@ -19,6 +19,15 @@ def get_events():
     return events
 
 
+@route.get("/{id}", status_code=200)
+def get_event_by_id(id: int):
+    events = config.techtrix_db["events"]
+    event = events.find_one({"_id": id})
+    if event is None:
+        raise HTTPException(status_code=204, detail="no event found")
+    return event
+
+
 @route.post("/", status_code=201)
 def post_event(event: Event = Body(...), token: str = Depends(oauth2_scheme)):
     if check_token(token):
