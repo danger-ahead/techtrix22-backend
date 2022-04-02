@@ -11,7 +11,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @route.get("/", status_code=200)
-async def home(token: str = Depends(oauth2_scheme)):
+def home(token: str = Depends(oauth2_scheme)):
     if check_token(token):
 
         list_popular_events = []
