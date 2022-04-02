@@ -34,7 +34,7 @@ def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
                 "name": team.name,
                 "contact_phone": team.contact_phone,
                 "image": team.image,
-                "role": team.role ,
+                "role": team.role,
             }
         )
         return team
@@ -43,9 +43,7 @@ def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
 
 
 @route.put("/edit/{id}", status_code=201)
-def edit_teams(
-    id: int, team: dict, token: str = Depends(oauth2_scheme)
-):
+def edit_teams(id: int, team: dict, token: str = Depends(oauth2_scheme)):
     if check_token(token):
         teams = config.techtrix_db["teams"]
         updated_team = {}

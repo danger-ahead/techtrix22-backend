@@ -9,6 +9,7 @@ route = APIRouter(prefix="/registrations", tags=["Registrations"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 def check_general_fees(email):
     participants = config.techtrix_db["participants"]
     participant = participants.find({"email": email})
@@ -40,25 +41,29 @@ async def register(
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
+@route.get("/email/{search_term}", status_code=200)
+async def get_total_fee(search_term: str, token: str = Depends(oauth2_scheme)):
+    if check_token(token):
+        registrations = config.techtrix_db["registrations"]
+        registration = registrations.find()
+
+        for reg in registration:
+            participants = list(reg["participants"])
+            for i in participants:
+                if search_term == i:
+                    return reg
+
+        return []
+
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+
 @route.get("/{search_term}", status_code=200)
 async def get_total_fee(search_term: str, token: str = Depends(oauth2_scheme)):
     if check_token(token):
         participants = config.techtrix_db["participants"]
         registrations = config.techtrix_db["registrations"]
-
-        general_fees = []
-
-        participant = participants.find({"email": search_term})
-        general_fees.append(participant["general_fees"])
-
-        participant_list = []
-
-        registration = registrations.find()
-        for reg in registration:
-            participants = reg["participants"]
-            for i in participants:
-                if i.equals(search_term):
-                    general_fees.append({})
 
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")

@@ -6,7 +6,7 @@ class Team(BaseModel):
     image: str = Field(...)
     name: str = Field(...)
     role: (str) = Field(...)
-    contact_phone : int = Field(...)
+    contact_phone: int = Field(...)
 
     class Config:
         arbitrary_types_allowed = True
