@@ -24,13 +24,12 @@ async def register(
         registrations = config.techtrix_db["registrations"]
         participants = config.techtrix_db["participants"]
         events = config.techtrix_db["events"]
-        reg_event_obj = events.find_one({"_id":int(registration.event)})
-        
-
+        reg_event_obj = events.find_one({"_id": int(registration.event)})
 
         for i in registration.participants:
             if participants.find_one({"email": i}) is None:
-                raise HTTPException(status_code=204, detail="participant doesn't exist")
+                # raise HTTPException(status_code=204, detail="participant doesn't exist")
+                raise HTTPException(status_code=200, detail={"success": "false"})
 
         registrations.insert_one(
             {
@@ -39,8 +38,8 @@ async def register(
                 "participants": registration.participants,
                 "event": registration.event,
                 "paid": registration.paid,
-                "event_name":reg_event_obj["name"],
-                "event_category":reg_event_obj["category"]
+                "event_name": reg_event_obj["name"],
+                "event_category": reg_event_obj["category"],
             }
         )
         return registration
