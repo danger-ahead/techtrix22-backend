@@ -10,7 +10,7 @@ route = APIRouter(prefix="/participants", tags=["Participants"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
+#gets all the participants 
 @route.get("/", status_code=200)
 def get_participants(token: str = Depends(oauth2_scheme)):
     if check_token(token):
@@ -24,7 +24,7 @@ def get_participants(token: str = Depends(oauth2_scheme)):
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-
+#gets the particpant on the basis of the email
 @route.get("/{email}", status_code=200)
 def get_participants(email: str, token: str = Depends(oauth2_scheme)):
     if check_token(token):

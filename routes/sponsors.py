@@ -12,7 +12,7 @@ route = APIRouter(prefix="/sponsors", tags=["Sponsors"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
+#gets all the sponsors
 @route.get("/", status_code=200)
 def get_Sponsors():
     sponsors = config.techtrix_db["sponsors"]
@@ -21,7 +21,7 @@ def get_Sponsors():
         raise HTTPException(status_code=204, detail=[])
     return sponsor
 
-
+#lets u add a new sponsor 
 @route.post("/", status_code=201)
 def add_Sponsors(sponsor: Sponsor = Body(...), token: str = Depends(oauth2_scheme)):
     if check_token(token):

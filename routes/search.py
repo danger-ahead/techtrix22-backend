@@ -4,7 +4,7 @@ import config
 
 route = APIRouter(prefix="/search", tags=["Search"])
 
-
+#gets all the events on the basis of a given category
 @route.get("/search_category/{search_term}", status_code=200)
 def get_events_under_category(search_term: str):
     events = config.techtrix_db["events"]
@@ -13,7 +13,7 @@ def get_events_under_category(search_term: str):
 
     return results
 
-
+#gets all the events or categories on the basis of search term
 @route.get("/{search_term}", status_code=200)
 def search(search_term: str):
     events = config.techtrix_db["events"]
