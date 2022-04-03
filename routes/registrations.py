@@ -1,6 +1,6 @@
 from datetime import datetime
 import random
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, Response
 from auth import check_token
 from fastapi.security import OAuth2PasswordBearer
 
@@ -15,8 +15,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # register for the event
 @route.post("/", status_code=201)
-async def register(
-    registration: Registration = Body(...), token: str = Depends(oauth2_scheme)
+def register(
+    response: Response,
+    registration: Registration = Body(...),
+    token: str = Depends(oauth2_scheme),
 ):
     if check_token(token):
         reg_id = str(datetime.now()) + " R " + str(random.randint(0, 99))
@@ -28,8 +30,8 @@ async def register(
 
         for i in registration.participants:
             if participants.find_one({"email": i}) is None:
-                # raise HTTPException(status_code=204, detail="participant doesn't exist")
-                raise HTTPException(status_code=200, detail={"success": "false"})
+                response.status_code = 200
+                return {"success": "false"}
 
         registrations.insert_one(
             {
