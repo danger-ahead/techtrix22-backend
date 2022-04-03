@@ -38,7 +38,7 @@ def get_participants(email: str, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.post("/", status_code=201, response_model=Participant)
+@route.post("/", status_code=201)
 def post_participant(
     participant: Participant = Body(...), token: str = Depends(oauth2_scheme)
 ):
@@ -63,7 +63,7 @@ def post_participant(
                 "gender": participant.gender,
             }
         )
-        return participant
+        return {"success": True}
 
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
