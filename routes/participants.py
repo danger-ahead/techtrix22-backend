@@ -63,7 +63,7 @@ def post_participant(
                 "gender": participant.gender,
             }
         )
-        return {"success": True}
+        return participant
 
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")

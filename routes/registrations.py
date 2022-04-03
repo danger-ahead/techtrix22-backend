@@ -44,7 +44,7 @@ def register(
                 "event_category": reg_event_obj["category"],
             }
         )
-        return registration
+        return {"success": True}
 
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
