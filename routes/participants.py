@@ -68,7 +68,7 @@ def post_participant(
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.put("/general_fees/{id}/{general_fees}", status_code=204)
+@route.put("/general_fees/{id}/{general_fees}", status_code=200)
 def update_participant(
     id: str, general_fees: bool, token: str = Depends(oauth2_scheme)
 ):

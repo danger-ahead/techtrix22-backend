@@ -118,8 +118,8 @@ async def get_total_fee(search_term: str, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.put("/pay", status_code=204)
-async def get_total_fee(
+@route.put("/pay", status_code=200)
+def get_total_fee(
     registration_pay: RegistrationPay = Body(...), token: str = Depends(oauth2_scheme)
 ):
     if check_token(token):
@@ -127,11 +127,15 @@ async def get_total_fee(
         participants = config.techtrix_db["participants"]
 
         for i in registration_pay.general_fees:
-            participants.update_one({"email": i}, {"$set": {"general_fees": True}})
+            participant = participants.find_one(
+                {"email": i}, {"email": 1, "general_fees": 1}
+            )
+            if not participant["general_fees"]:
+                participants.update_one({"email": i}, {"$set": {"general_fees": True}})
 
         for i in registration_pay.reg_id:
-            registration = registrations.find_one({"_id": i})
-            if registration is not None:
+            registration = registrations.find_one({"_id": i}, {"_id": 1, "paid": 1})
+            if registration["paid"] is False:
                 registrations.update_one({"_id": i}, {"$set": {"paid": True}})
 
         return {"success": "true"}
