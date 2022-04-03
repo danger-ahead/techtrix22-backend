@@ -22,7 +22,8 @@ def get_teams(token: str = Depends(oauth2_scheme)):
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-# add a new team 
+
+# add a new team
 @route.post("/", status_code=201)
 def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
     try:
@@ -44,6 +45,7 @@ def add_team(team: Team = Body(...), token: str = Depends(oauth2_scheme)):
             raise HTTPException(status_code=401, detail="Unauthorized")
     except Exception as e:
         raise HTTPException(status_code=409, detail=str(e))
+
 
 # updating information of particular team
 @route.put("/edit/{id}", status_code=201)

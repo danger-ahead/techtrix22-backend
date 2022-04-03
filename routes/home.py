@@ -29,7 +29,7 @@ def home(token: str = Depends(oauth2_scheme)):
                 list_flagship_events.append(event)
 
         category_events = list(categories.find())
-        if category_events.__len__() is not 0:
+        if category_events.__len__() != 0:
             for i in category_events:
                 list_category_events.append(i["_id"])
 
@@ -38,6 +38,8 @@ def home(token: str = Depends(oauth2_scheme)):
             "flagship": list_flagship_events,
             "categories": list_category_events,
             "trending": config.trending_searches,
+            "update_required": config.update_required,
         }
+
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")

@@ -10,7 +10,7 @@ route = APIRouter(prefix="/participants", tags=["Participants"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-#gets all the participants 
+# gets all the participants
 @route.get("/", status_code=200)
 def get_participants(token: str = Depends(oauth2_scheme)):
     if check_token(token):
@@ -24,7 +24,8 @@ def get_participants(token: str = Depends(oauth2_scheme)):
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-#gets the particpant on the basis of the email
+
+# gets the particpant on the basis of the email
 @route.get("/{email}", status_code=200)
 def get_participants(email: str, token: str = Depends(oauth2_scheme)):
     if check_token(token):
@@ -87,8 +88,10 @@ def update_participant(
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
-@route.put("/{id}", status_code=200)
-def update_participant(id: str, participant: dict, token: str = Depends(oauth2_scheme)):
+@route.put("/{email}", status_code=200)
+def update_participant(
+    email: str, participant: dict, token: str = Depends(oauth2_scheme)
+):
     if check_token(token):
         participants = config.techtrix_db["participants"]
 
@@ -97,8 +100,8 @@ def update_participant(id: str, participant: dict, token: str = Depends(oauth2_s
             if participant[key] is not None:
                 update_items[key] = participant[key]
 
-        if participants.find_one({"_id": id}):
-            participants.update_one({"_id": id}, {"$set": update_items})
+        if participants.find_one({"email": email}):
+            participants.update_one({"email": email}, {"$set": update_items})
             return {"success": "true"}
         else:
             raise HTTPException(status_code=404, detail="participant not found")

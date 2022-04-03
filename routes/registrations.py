@@ -31,7 +31,7 @@ def register(
         for i in registration.participants:
             if participants.find_one({"email": i}) is None:
                 response.status_code = 200
-                return {"success": "false"}
+                return {"success": False}
 
         registrations.insert_one(
             {
