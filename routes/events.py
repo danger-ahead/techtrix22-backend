@@ -10,6 +10,25 @@ route = APIRouter(prefix="/events", tags=["Events"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # This function fetches all events from db
+@route.get("/{category}", status_code=200)
+def get_events_by_category(category: str):
+    events = config.techtrix_db["events"]
+    events = list(events.find({"category": category}))
+    if events.__len__() == 0:
+        raise HTTPException(status_code=204, detail="Nothing yet added to the events")
+    return events
+
+
+# This function fetches a particular event on the basis of event id
+@route.get("/find_by_id/{id}", status_code=200)
+def get_event_by_id(id: int):
+    events = config.techtrix_db["events"]
+    event = events.find_one({"_id": id})
+    if event is None:
+        raise HTTPException(status_code=204, detail="no event found")
+    return event
+
+# This function fetches all events from db
 @route.get("/", status_code=200)
 def get_events():
     events = config.techtrix_db["events"]
@@ -17,16 +36,6 @@ def get_events():
     if events.__len__() == 0:
         raise HTTPException(status_code=204, detail="Nothing yet added to the events")
     return events
-
-
-# This function fetches a particular event on the basis of event id
-@route.get("/{id}", status_code=200)
-def get_event_by_id(id: int):
-    events = config.techtrix_db["events"]
-    event = events.find_one({"_id": id})
-    if event is None:
-        raise HTTPException(status_code=204, detail="no event found")
-    return event
 
 
 # This function is used to create a new event
