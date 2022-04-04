@@ -11,6 +11,7 @@ from routes import (
     search,
     teams,
     registrations,
+    reg_desk,
 )
 
 
@@ -34,6 +35,7 @@ app.include_router(participants.route)
 app.include_router(search.route)
 app.include_router(teams.route)
 app.include_router(registrations.route)
+app.include_router(reg_desk.route)
 
 
 @app.get("/")
