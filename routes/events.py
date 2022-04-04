@@ -19,6 +19,16 @@ def get_events():
     return events
 
 
+# This function fetches all events from db
+@route.get("/{category}", status_code=200)
+def get_events_by_category(category: str):
+    events = config.techtrix_db["events"]
+    events = list(events.find({"category": category}))
+    if events.__len__() == 0:
+        raise HTTPException(status_code=204, detail="Nothing yet added to the events")
+    return events
+
+
 # This function fetches a particular event on the basis of event id
 @route.get("/{id}", status_code=200)
 def get_event_by_id(id: int):
