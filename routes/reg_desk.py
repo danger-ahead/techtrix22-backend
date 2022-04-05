@@ -54,6 +54,24 @@ def login(response: Response, email: str, password: str):
             raise HTTPException(status_code=401, detail="Unauthorized")
 
 
+# get the reg_desk obj
+@route.get("/reg_desk_obj", status_code=200)
+def get_reg_desk_obj(token: str = Depends(oauth2_scheme)):
+    reg_desk = config.techtrix_db["reg_desk"]
+
+    reg_desk_user_email = verify_access_token(token)
+    reg_desk_user = reg_desk.find_one(
+        {"_id": reg_desk_user_email},
+        {"amt_collected_7": 1, "amt_collected_8": 1, "amt_collected_9": 1},
+    )
+
+    if reg_desk_user is None:
+        raise HTTPException(status_code=404, detail="user not found")
+
+    else:
+        return reg_desk_user
+
+
 # collect api
 @route.put("/collect/{amount}", status_code=200)
 def collect_fee(
