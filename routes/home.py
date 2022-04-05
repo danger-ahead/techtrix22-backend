@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException
 from auth import check_token
 from fastapi.security import OAuth2PasswordBearer
-from typing import List
+from typing import List, Optional
 
 import config
 
@@ -11,9 +11,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @route.get("/", status_code=200)
-def home(token: str = Depends(oauth2_scheme)):
+def home(version_code: str, token: str = Depends(oauth2_scheme)):
     if check_token(token):
-
         list_popular_events = []
         list_flagship_events = []
         list_category_events = []
@@ -33,12 +32,14 @@ def home(token: str = Depends(oauth2_scheme)):
             for i in category_events:
                 list_category_events.append(i["_id"])
 
+        update_required = True if int(version_code) < 4 else False
+
         return {
             "popular": list_popular_events,
             "flagship": list_flagship_events,
             "categories": list_category_events,
             "trending": config.trending_searches,
-            "update_required": config.update_required,
+            "update_required": update_required,
         }
 
     else:
