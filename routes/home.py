@@ -11,7 +11,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @route.get("/", status_code=200)
-def home(version_code: str, token: str = Depends(oauth2_scheme)):
+def home(version_code: Optional[str] = "5", token: str = Depends(oauth2_scheme)):
     if check_token(token):
         list_popular_events = []
         list_flagship_events = []

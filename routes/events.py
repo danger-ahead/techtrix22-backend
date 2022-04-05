@@ -28,6 +28,7 @@ def get_event_by_id(id: int):
         raise HTTPException(status_code=204, detail="no event found")
     return event
 
+
 # This function fetches all events from db
 @route.get("/", status_code=200)
 def get_events():
