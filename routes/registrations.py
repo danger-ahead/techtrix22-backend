@@ -71,65 +71,65 @@ async def check_events(search_term: str, token: str = Depends(oauth2_scheme)):
 
 
 # function to check the general fees paid status
-def check_general_fees(participant_set):
-    participants_collection = config.techtrix_db["participants"]
-    participants_dict = {}
+# def check_general_fees(participant_set):
+#     participants_collection = config.techtrix_db["participants"]
+#     participants_dict = {}
 
-    for participants in participant_set:
-        individual_participant = participants_collection.find_one(
-            {"email": participants}
-        )
-        if individual_participant["general_fees"] is False:
-            participants_dict[participants] = config.general_fees
+#     for participants in participant_set:
+#         individual_participant = participants_collection.find_one(
+#             {"email": participants}
+#         )
+#         if individual_participant["general_fees"] is False:
+#             participants_dict[participants] = config.general_fees
 
-    return participants_dict
+#     return participants_dict
 
 
-# get payment details from email
-@route.get("/get_payment/email/{search_term}", status_code=200)
-async def get_total_fee(search_term: str, token: str = Depends(oauth2_scheme)):
-    if check_token(token):
-        registrations = config.techtrix_db["registrations"]
-        events = config.techtrix_db["events"]
+# # get payment details from email
+# @route.get("/get_payment/email/{search_term}", status_code=200)
+# async def get_total_fee(search_term: str, token: str = Depends(oauth2_scheme)):
+#     if check_token(token):
+#         registrations = config.techtrix_db["registrations"]
+#         events = config.techtrix_db["events"]
 
-        registration = registrations.find()
+#         registration = registrations.find()
 
-        # will be storing the email, no duplication
-        participants_set = set()
-        # will be storing the event list the participant has participated in
-        events_list = []
+#         # will be storing the email, no duplication
+#         participants_set = set()
+#         # will be storing the event list the participant has participated in
+#         events_list = []
 
-        count = 0
-        for reg in registration:
-            count += 1
-            if not reg["paid"]:
-                participants = reg["participants"]
-                for i in participants:
-                    if search_term == i:
-                        event = events.find_one({"_id": int(reg["event"])})
-                        event_name = event["name"]
-                        event_fee = event["fee"]
+#         count = 0
+#         for reg in registration:
+#             count += 1
+#             if not reg["paid"]:
+#                 participants = reg["participants"]
+#                 for i in participants:
+#                     if search_term == i:
+#                         event = events.find_one({"_id": int(reg["event"])})
+#                         event_name = event["name"]
+#                         event_fee = event["fee"]
 
-                        events_list.append({reg["_id"]: {event_name: event_fee}})
-                        participants_set = participants_set.union(set(participants))
+#                         events_list.append({reg["_id"]: {event_name: event_fee}})
+#                         participants_set = participants_set.union(set(participants))
 
-                        break
+#                         break
 
-            general_fees = check_general_fees(participants_set)
-            return {"general_fees": general_fees, "event_fees": events_list}
+#             general_fees = check_general_fees(participants_set)
+#             return {"general_fees": general_fees, "event_fees": events_list}
 
-        if count == 0:
-            participants_dict = {}
+#         if count == 0:
+#             participants_dict = {}
 
-            participants = config.techtrix_db["participants"]
-            individual_participant = participants.find_one({"email": search_term})
-            if individual_participant["general_fees"] is False:
-                participants_dict[search_term] = config.general_fees
+#             participants = config.techtrix_db["participants"]
+#             individual_participant = participants.find_one({"email": search_term})
+#             if individual_participant["general_fees"] is False:
+#                 participants_dict[search_term] = config.general_fees
 
-            return {"general_fees": participants_dict, "event_fees": events_list}
+#             return {"general_fees": participants_dict, "event_fees": events_list}
 
-    else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+#     else:
+#         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 # @route.put("/pay", status_code=200)
