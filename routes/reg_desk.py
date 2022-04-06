@@ -150,7 +150,10 @@ async def get_total_fee(search_term: str):
     registrations = config.techtrix_db["registrations"]
     events = config.techtrix_db["events"]
 
-    registration = registrations.find()
+    registration = registrations.find(
+        {"participants": search_term, "paid": False},
+        {"_id": 1, "participants": 1, "event": 1},
+    )
 
     # will be storing the email, no duplication
     participants_set = set()
@@ -161,24 +164,26 @@ async def get_total_fee(search_term: str):
 
     for reg in list(registration):
         participants = reg["participants"]
-        for i in participants:
-            if search_term == i:
-                event = events.find_one({"_id": int(reg["event"])})
-                event_name = event["name"]
-                event_fee = event["fee"]
+        event = events.find_one({"_id": int(reg["event"])})
+        event_name = event["name"]
+        event_fee = event["fee"]
 
-                events_list.append(
-                    {"_id": reg["_id"], "event_name": event_name, "amount": event_fee}
-                )
-                participants_set = participants_set.union(set(participants))
-                break
+        events_list.append(
+            {"_id": reg["_id"], "event_name": event_name, "amount": event_fee}
+        )
+
+        participants_set = participants_set.union(set(participants))
 
         general_fees = check_general_fees(participants_set)
 
     if (events_list.__len__() == 0) and (general_fees.__len__() == 0):
         participants = config.techtrix_db["participants"]
-        individual_participant = participants.find_one({"email": search_term})
-        if individual_participant["general_fees"] is False:
+        if (
+            participants.find_one(
+                {"email": search_term, "general_fees": False}, {"_id": 1}
+            )
+            is not None
+        ):
             general_fees = [{"email": search_term, "amount": config.general_fees}]
 
     return {"general_fees": general_fees, "event_fees": events_list}
