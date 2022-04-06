@@ -1,3 +1,4 @@
+from collections import Counter
 from datetime import datetime
 import random
 from fastapi import APIRouter, Body, Depends, HTTPException, Response
@@ -12,6 +13,16 @@ route = APIRouter(prefix="/registrations", tags=["Registrations"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
+# check if all the emails are unique
+def check_unique_email(emails):
+    email_set = set(emails)
+
+    if emails.__len__() == email_set.__len__():
+        return True
+
+    return False
+
+
 # register for the event
 @route.post("/", status_code=201)
 def register(
@@ -19,7 +30,7 @@ def register(
     registration: Registration = Body(...),
     token: str = Depends(oauth2_scheme),
 ):
-    if check_token(token):
+    if check_token(token) and check_unique_email(registration.participants):
         reg_id = str(datetime.now()) + " R " + str(random.randint(0, 99))
 
         registrations = config.techtrix_db["registrations"]
@@ -46,7 +57,8 @@ def register(
         return {"success": True}
 
     else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        response.status_code = 200
+        return {"success": False}
 
 
 # get all the events the participant has registered in
