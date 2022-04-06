@@ -152,9 +152,13 @@ async def get_total_fee(search_term: str):
     participants_set = set()
     # will be storing the event list the participant has participated in
     events_list = []
+    # participants dict will be storing the email as key and the amount as value
+    participants_dict = {}
 
     count = 0
-    for reg in registration:
+    testarr = []
+    for reg in list(registration):
+        testarr.append(reg)
         count += 1
         if not reg["paid"]:
             participants = reg["participants"]
@@ -167,17 +171,15 @@ async def get_total_fee(search_term: str):
                     events_list.append({reg["_id"]: {event_name: event_fee}})
                     participants_set = participants_set.union(set(participants))
 
-                    break
-
         general_fees = check_general_fees(participants_set)
+
+    if count != 0:
         return {"general_fees": general_fees, "event_fees": events_list}
 
-    if count == 0:
-        participants_dict = {}
-
+    else:
         participants = config.techtrix_db["participants"]
         individual_participant = participants.find_one({"email": search_term})
         if individual_participant["general_fees"] is False:
             participants_dict[search_term] = config.general_fees
 
-        return {"general_fees": participants_dict, "event_fees": events_list}
+    return {"general_fees": participants_dict, "event_fees": events_list}
