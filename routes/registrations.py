@@ -81,6 +81,16 @@ async def search_registration_by_event_id(event_id:str, token: str = Depends(oau
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
+@route.delete("/delete/{reg_id}",status_code=200)
+async def delete_reg_by_id(reg_id:str,token:str = Depends(oauth2_scheme)):
+    if check_token(token):
+        registrations = config.techtrix_db["registrations"]
+        x = registrations.delete_one({"_id":reg_id})
+        if(x.deleted_count == 0):
+            raise HTTPException(status_code=204,detail="Reg Object not found")
+        return {"success":True}
+    else:
+        raise HTTPException(status_code=401,detail="Unauthorized")
         
         
 
