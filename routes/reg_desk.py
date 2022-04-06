@@ -169,7 +169,12 @@ async def get_total_fee(search_term: str):
         event_fee = event["fee"]
 
         events_list.append(
-            {"_id": reg["_id"], "event_name": event_name, "amount": event_fee}
+            {
+                "_id": reg["_id"],
+                "event_name": event_name,
+                "amount": event_fee,
+                "participants": participants,
+            }
         )
 
         participants_set = participants_set.union(set(participants))
