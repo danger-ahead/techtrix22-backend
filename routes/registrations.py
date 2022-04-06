@@ -55,16 +55,19 @@ def register(
 async def check_events(search_term: str, token: str = Depends(oauth2_scheme)):
     if check_token(token):
         registrations = config.techtrix_db["registrations"]
-        registration = registrations.find()
+        registration = registrations.find(
+            {"participants": search_term},
+            {
+                "_id": 1,
+                "participants": 1,
+                "team_name": 1,
+                "event_name": 1,
+                "event_category": 1,
+                "paid": 1,
+            },
+        )
 
-        registration_list = []
-
-        for reg in registration:
-            participants = list(reg["participants"])
-            for i in participants:
-                if search_term == i:
-                    registration_list.append(reg)
-        return registration_list
+        return list(registration)
 
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
