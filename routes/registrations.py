@@ -6,7 +6,6 @@ from fastapi.security import OAuth2PasswordBearer
 
 import config
 from models.registration import Registration
-from models.registration_pay import RegistrationPay
 
 route = APIRouter(prefix="/registrations", tags=["Registrations"])
 
@@ -87,18 +86,25 @@ async def search_registration_by_event_id(
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-@route.delete("/delete/{reg_id}",status_code=200)
-async def delete_reg_by_id(reg_id:str,token:str = Depends(oauth2_scheme)):
+
+# delete a reg is not yet paid
+@route.delete("/delete/{reg_id}", status_code=200)
+async def delete_reg_by_id(
+    response: Response, reg_id: str, token: str = Depends(oauth2_scheme)
+):
     if check_token(token):
         registrations = config.techtrix_db["registrations"]
-        x = registrations.delete_one({"_id":reg_id})
-        if(x.deleted_count == 0):
-            raise HTTPException(status_code=204,detail="Reg Object not found")
-        return {"success":True}
+        x = registrations.delete_one({"_id": reg_id, "paid": False})
+
+        if x.deleted_count == 0:
+            response.status_code = 200
+            return {"success": False}
+
+        return {"success": True}
+
     else:
-        raise HTTPException(status_code=401,detail="Unauthorized")
-        
-        
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
 
 # function to check the general fees paid status
 # def check_general_fees(participant_set):
