@@ -69,6 +69,20 @@ async def check_events(search_term: str, token: str = Depends(oauth2_scheme)):
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
+@route.get("/event/{event_id}",status_code=200)
+async def search_registration_by_event_id(event_id:str, token: str = Depends(oauth2_scheme)):
+    if check_token(token):
+        registrations = config.techtrix_db["registrations"]
+        registrations = list(registrations.find({"event":event_id}))
+
+        if registrations.__len__ == 0:
+            raise HTTPException(status_code=204, detail=[])
+        return registrations
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+        
+        
 
 # function to check the general fees paid status
 # def check_general_fees(participant_set):
