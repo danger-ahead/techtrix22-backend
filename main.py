@@ -12,7 +12,7 @@ from routes import (
     teams,
     registrations,
     reg_desk,
-    coordinators
+    coordinators,
 )
 
 
