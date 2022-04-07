@@ -1,3 +1,4 @@
+from asyncio import streams
 from collections import Counter
 from datetime import datetime
 import random
@@ -43,6 +44,10 @@ def register(
                 response.status_code = 200
                 return {"success": False}
 
+        leader = participants.find_one(
+            {"email": registration.participants[0]}, {"name": 1, "phone": 1}
+        )
+
         registrations.insert_one(
             {
                 "_id": reg_id,
@@ -52,6 +57,8 @@ def register(
                 "paid": registration.paid,
                 "event_name": reg_event_obj["name"],
                 "event_category": reg_event_obj["category"],
+                "leader_name": leader["name"],
+                "leader_contact": leader["phone"],
             }
         )
         return {"success": True}
@@ -85,18 +92,13 @@ async def check_events(search_term: str, token: str = Depends(oauth2_scheme)):
 
 
 @route.get("/event/{event_id}", status_code=200)
-async def search_registration_by_event_id(
-    event_id: str, token: str = Depends(oauth2_scheme)
-):
-    if check_token(token):
-        registrations = config.techtrix_db["registrations"]
-        registrations = list(registrations.find({"event": event_id}))
+async def search_registration_by_event_id(event_id: str):
+    registrations = config.techtrix_db["registrations"]
+    registrations = list(registrations.find({"event": event_id}))
 
-        if registrations.__len__ == 0:
-            raise HTTPException(status_code=204, detail=[])
-        return registrations
-    else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    if registrations.__len__ == 0:
+        raise HTTPException(status_code=204, detail=[])
+    return registrations
 
 
 # delete a reg is not yet paid
